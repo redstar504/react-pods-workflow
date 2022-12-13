@@ -9507,14 +9507,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 7986:
-/***/ ((module) => {
-
-module.exports = eval("require")("./src/extractPodspecs.js");
-
-
-/***/ }),
-
 /***/ 2877:
 /***/ ((module) => {
 
@@ -9694,7 +9686,19 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
-const extractPodspecs = __nccwpck_require__(7986);
+
+function extractPodspecs(config) {
+    const deps = config.dependencies;
+    let podSpecs = [];
+
+    for (const dep in deps) {
+        if (deps[dep].platforms && deps[dep].platforms.ios && deps[dep].platforms.ios.podspecPath) {
+            podSpecs = [...podSpecs, deps[dep].platforms.ios.podspecPath];
+        }
+    }
+
+    return podSpecs;
+}
 
 try {
     const config = JSON.parse(JSON.parse(core.getMultilineInput("config")));

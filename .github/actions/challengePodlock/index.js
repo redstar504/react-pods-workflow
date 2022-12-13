@@ -9507,14 +9507,6 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 4186:
-/***/ ((module) => {
-
-module.exports = eval("require")("./src/challengePodlock.js");
-
-
-/***/ }),
-
 /***/ 2877:
 /***/ ((module) => {
 
@@ -9694,8 +9686,24 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
-const challengePodlock = __nccwpck_require__(4186);
 const config = JSON.parse(JSON.parse(core.getInput("pods")));
+
+function challengePodlock(podIpcJson) {
+    const podLockContents = fs.readFileSync('./ios/Podfile.lock', 'utf-8');
+    const deps = podIpcJson;
+
+    for (const dep in deps) {
+        const name = deps[dep].name;
+        const version = deps[dep].version;
+        const podLockFormat = `${name} (${version})`;
+        if(!podLockContents.includes(podLockFormat)) {
+            console.log(podLockFormat + ': installed as part of an npm dependency, but not found in Podfile.lock.');
+            return false;
+        }
+    }
+
+    return true;
+}
 
 if (!challengePodlock(config)) {
     core.setFailed('Podfile is not synced.  Run `pod install` in the iOS directory and commit the new Podfile.lock')
