@@ -33,7 +33,7 @@ jobs:
 
       - name: Collect .podspec files used by the project
         id: collect
-        uses: ./.github/actions/collectPodspecs
+        uses: redstar504/react-pods-workflow/.github/actions/collectPodspecs@main
         with:
           config: ${{ toJSON(env.JSON_RESPONSE) }}
 
@@ -44,6 +44,6 @@ jobs:
 
       - name: Challenge podspecs against Podfile.lock
         id: bonjour
-        uses: ./.github/actions/challengePodlock
+        uses: redstar504/react-pods-workflow/.github/actions/challengePodlock@main
         with:
           pods: ${{ toJSON(env.POD_SUMMARY) }}
