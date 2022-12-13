@@ -1,0 +1,9 @@
+name: 'Challenge the Podfile.lock'
+description: 'Verifies whether pods required by npm project dependencies exist in Podfile.lock'
+inputs:
+  pods:  # id of input
+    description: 'React native pods'
+    required: true
+runs:
+  using: 'node16'
+  main: 'index.js'

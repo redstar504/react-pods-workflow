@@ -1,0 +1,12 @@
+name: 'Collect Podspec files'
+description: 'Greet someone and record the time'
+inputs:
+  config:  # id of input
+    description: 'React native dependency config'
+    required: true
+outputs:
+  extractedPodspecs: # id of output
+    description: 'An array of the podspec files'
+runs:
+  using: 'node16'
+  main: 'index.js'

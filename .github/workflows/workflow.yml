@@ -1,0 +1,49 @@
+name: Verify that Podfile.lock is in sync with npm dependencies
+on: [workflow_call]
+
+jobs:
+  verify:
+    runs-on: macOS-latest
+    name: Get Project PodSpec Files
+    steps:
+      - name: Checkout project files
+        uses: actions/checkout@v3
+
+      - name: Install node
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Set react-native config to an environment variable
+        run: |
+          echo 'JSON_RESPONSE<<EOF' >> $GITHUB_ENV
+          ./node_modules/.bin/react-native config >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Collect .podspec files used by the project
+        id: collect
+        uses: ./.github/actions/collectPodspecs
+        with:
+          config: ${{ toJSON(env.JSON_RESPONSE) }}
+
+      - run: echo "POD_SPECS=${{ steps.collect.outputs.podspecs }}" >> $GITHUB_ENV
+      - run: echo "POD_SPECS=$(echo $POD_SPECS | sed -r 's|[]["]||g' | sed -r 's|,| |g')" >> $GITHUB_ENV
+      - run: echo "POD_SUMMARY=$(./.github/scripts/podspecToJson.sh $POD_SPECS)" >> $GITHUB_ENV
+      - run: echo "${POD_SUMMARY}"
+
+      - name: Challenge podspecs against Podfile.lock
+        id: bonjour
+        uses: ./.github/actions/challengePodlock
+        with:
+          pods: ${{ toJSON(env.POD_SUMMARY) }}
