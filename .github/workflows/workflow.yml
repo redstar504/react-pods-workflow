@@ -37,9 +37,14 @@ jobs:
         with:
           config: ${{ toJSON(env.JSON_RESPONSE) }}
 
+      - name: Download the utility script
+        run: curl -o $PWD/podspecToJson.sh https://raw.githubusercontent.com/redstar504/react-pods-workflow/main/.github/scripts/podspecToJson.sh
+      - name: Give script permissions
+        run: chmod +x $PWD/podspecToJson.sh
+
       - run: echo "POD_SPECS=${{ steps.collect.outputs.podspecs }}" >> $GITHUB_ENV
       - run: echo "POD_SPECS=$(echo $POD_SPECS | sed -r 's|[]["]||g' | sed -r 's|,| |g')" >> $GITHUB_ENV
-      - run: echo "POD_SUMMARY=$(./.github/scripts/podspecToJson.sh $POD_SPECS)" >> $GITHUB_ENV
+      - run: echo "POD_SUMMARY=$($PWD/podspecToJson.sh $POD_SPECS)" >> $GITHUB_ENV
       - run: echo "${POD_SUMMARY}"
 
       - name: Challenge podspecs against Podfile.lock
