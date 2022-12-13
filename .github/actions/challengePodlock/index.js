@@ -9687,6 +9687,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 const config = JSON.parse(JSON.parse(core.getInput("pods")));
+const fs = __nccwpck_require__(7147);
 
 function challengePodlock(podIpcJson) {
     const podLockContents = fs.readFileSync('./ios/Podfile.lock', 'utf-8');

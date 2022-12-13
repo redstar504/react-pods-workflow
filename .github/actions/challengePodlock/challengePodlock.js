@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const config = JSON.parse(JSON.parse(core.getInput("pods")));
+const fs = require('fs');
 
 function challengePodlock(podIpcJson) {
     const podLockContents = fs.readFileSync('./ios/Podfile.lock', 'utf-8');
