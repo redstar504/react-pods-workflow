@@ -3,14 +3,14 @@ index=0
 
 for var in "$@"
 do
-    podSpec=$(pod ipc spec ${var})
-    output="${output} ${podSpec}"
+    # some podspecs output with comments preceding the json data, we remove them using sed
+    podSpec="$(pod ipc spec ${var} | sed -r '1,+6{/^[^{}[:space:]].+$/d;}')"
+    output="$output $podSpec"
     index=$((index + 1))
     if [ $index -ne $# ]; then
-      output="${output},"
+      output="$output,"
     fi
 done
 
-output="${output}]"
-
-echo $output
+output="$output]"
+echo "$output" | tr -d '\n'
