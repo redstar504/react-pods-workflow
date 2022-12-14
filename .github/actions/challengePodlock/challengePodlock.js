@@ -21,7 +21,7 @@ function challengePodlock(podIpcJson) {
 }
 
 if (!challengePodlock(config)) {
-    core.setFailed('Podfile is not synced.  Run `pod install` in the iOS directory and commit the new Podfile.lock')
+    core.setFailed('Pods are not synced.  Run `pod install` in the iOS directory and commit the new Podfile.lock')
 } else {
     console.log('Pods appear to be synced.')
 }
