@@ -24,6 +24,8 @@ Once it has a list of these dependencies, it translates the podspec files to JSO
 
 Once we have the Pod names and versions required by all of the node modules, it searches through the Podfile.lock to make sure each Pod is installed along with the correct version.
 
+**This workflow does not depend on the MacOS runner using `pod install`.  Running `pod install` in a workflow can add several minutes to the build and this solution is an effort to avoid that.**
+
 ## Results
 
 If a specific Pod version is not found in the Podfile.lock, the workflow throws an error and lets the team know the Podfile.lock is out of sync.
