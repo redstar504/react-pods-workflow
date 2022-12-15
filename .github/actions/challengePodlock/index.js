@@ -9690,7 +9690,13 @@ const config = JSON.parse(JSON.parse(core.getInput("pods")));
 const fs = __nccwpck_require__(7147);
 
 function challengePodlock(podIpcJson) {
-    const podLockContents = fs.readFileSync('./ios/Podfile.lock', 'utf-8');
+    try {
+        const podLockContents = fs.readFileSync('./ios/Podfile.lock', 'utf-8');
+    } catch (error) {
+        core.setFailed('Podfile.lock not found - did you run `pod install` yet?')
+        return false;
+    }
+
     const deps = podIpcJson;
 
     for (const dep in deps) {
