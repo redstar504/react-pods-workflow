@@ -5,65 +5,87 @@ jobs:
   verify:
     runs-on: macOS-latest
     name: Get Project PodSpec Files
+
     steps:
-      - name: Checkout project files
-        uses: actions/checkout@v3
+      - name: create string
+        run: |
+          MY_STRING=$(cat << EOF
+            $(cat ./.rnconfig)
+          EOF
+          )
+          echo "MY_STRING<<EOF" >> $GITHUB_ENV
+          echo "$MY_STRING" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+        id: my_string
+      - name: display string
+        run: |
+          echo "The string is: ${{ env.MY_STRING }}"
 
-      - name: Install node
-        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
-        with:
-          node-version-file: '.nvmrc'
-          cache: npm
-
-      - name: Retrieve cached node modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: node_modules-${{ hashFiles('package-lock.json') }}
-
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm install
-
-#      - name: Set react-native config to an environment variable
-#        run: |
-#          echo 'JSON_RESPONSE<<EOF' >> $GITHUB_ENV
-#          ./node_modules/.bin/react-native config >> $GITHUB_ENV
-#          echo 'EOF' >> $GITHUB_ENV
 #
-#      - name: Collect .podspec files used by the project
+#    steps:
+##      - name: Checkout project files
+##        uses: actions/checkout@v3
+##
+##      - name: Install node
+##        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
+##        with:
+##          node-version-file: '.nvmrc'
+##          cache: npm
+##
+##      - name: Retrieve cached node modules
+##        uses: actions/cache@v2
+##        with:
+##          path: node_modules
+##          key: node_modules-${{ hashFiles('package-lock.json') }}
+##
+##      - name: Install dependencies
+##        if: steps.cache.outputs.cache-hit != 'true'
+##        run: npm install
+#
+##      - name: Set react-native config to an environment variable
+##        run: |
+##          echo 'JSON_RESPONSE<<EOF' >> $GITHUB_ENV
+##          ./node_modules/.bin/react-native config >> $GITHUB_ENV
+##          echo 'EOF' >> $GITHUB_ENV
+##
+##      - name: Collect .podspec files used by the project
+##        id: collect
+##        run: |
+##          echo "PODSPEC_FILES=$(\
+##            npx react-native config | \
+##            jq '[.dependencies[].platforms.ios.podspecPath | select . != null)]' \
+##          )" >> "$GITHUB_OUTPUT"
+##        uses: redstar504/react-pods-workflow/.github/actions/collectPodspecs@main
+##        with:
+##          config: ${{ toJSON(env.JSON_RESPONSE) }}
+##
+##      - name: Download the utility script
+##        run: curl -o $PWD/podspecToJson.sh https://raw.githubusercontent.com/redstar504/react-pods-workflow/main/.github/scripts/podspecToJson.sh
+##      - name: Give script permissions
+##        run: chmod +x $PWD/podspecToJson.sh
+##
+##      - run: echo "POD_SPECS=${{ steps.collect.outputs.extractedPodspecs }}" >> $GITHUB_ENV
+##      - run: echo "POD_SPECS=$(echo $POD_SPECS | sed -r 's|[]["]||g' | sed -r 's|,| |g')" >> $GITHUB_ENV
+##      - run: echo "POD_SUMMARY=$($PWD/podspecToJson.sh $POD_SPECS)" >> $GITHUB_ENV
+##      - run: echo "${POD_SUMMARY}"
+#
+#      - name: Collect PodSpecs used by the project
 #        id: collect
 #        run: |
-#          echo "PODSPEC_FILES=$(\
-#            npx react-native config | \
-#            jq '[.dependencies[].platforms.ios.podspecPath | select . != null)]' \
-#          )" >> "$GITHUB_OUTPUT"
-#        uses: redstar504/react-pods-workflow/.github/actions/collectPodspecs@main
-#        with:
-#          config: ${{ toJSON(env.JSON_RESPONSE) }}
+#          MY_STRING=$(cat << EOF
+#            first line
+#            second line
+#            third line
+#          EOF)
+#          echo "MY_STRING <<EOF" >> $GITHUB_ENV
+#          echo "$MY_STRING" >> $GITHUB_ENV
+#          echo "EOF" >> $GITHUB_ENV
 #
-#      - name: Download the utility script
-#        run: curl -o $PWD/podspecToJson.sh https://raw.githubusercontent.com/redstar504/react-pods-workflow/main/.github/scripts/podspecToJson.sh
-#      - name: Give script permissions
-#        run: chmod +x $PWD/podspecToJson.sh
+#      - run: |
+#          echo "The string is ${{ env.MY_STRING }}"
 #
-#      - run: echo "POD_SPECS=${{ steps.collect.outputs.extractedPodspecs }}" >> $GITHUB_ENV
-#      - run: echo "POD_SPECS=$(echo $POD_SPECS | sed -r 's|[]["]||g' | sed -r 's|,| |g')" >> $GITHUB_ENV
-#      - run: echo "POD_SUMMARY=$($PWD/podspecToJson.sh $POD_SPECS)" >> $GITHUB_ENV
-#      - run: echo "${POD_SUMMARY}"
-
-      - name: Collect .podspec files used by the project
-        id: collect
-        run: |
-          echo 'PODSPEC_FILES<<EOF' >> $GITHUB_ENV
-          npx react-native config | jq '[.dependencies[].platforms.ios.podspecPath | select( . != null )]' >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-
-      - run: |
-          echo "$GITHUB_ENV"
-
-#      - name: Challenge podspecs against Podfile.lock
-#        id: bonjour
-#        uses: redstar504/react-pods-workflow/.github/actions/challengePodlock@main
-#        with:
-#          pods: ${{ toJSON(steps.collect.outputs.PODSPECS) }}
+##      - name: Challenge podspecs against Podfile.lock
+##        id: bonjour
+##        uses: redstar504/react-pods-workflow/.github/actions/challengePodlock@main
+##        with:
+##          pods: ${{ toJSON(steps.collect.outputs.PODSPECS) }}
