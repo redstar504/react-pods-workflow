@@ -52,12 +52,6 @@ jobs:
 #      - run: echo "POD_SUMMARY=$($PWD/podspecToJson.sh $POD_SPECS)" >> $GITHUB_ENV
 #      - run: echo "${POD_SUMMARY}"
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
-        with:
-          ## limits ssh access and adds the ssh public key for the user which triggered the workflow
-          limit-access-to-actor: false
-
       - name: Collect .podspec files used by the project
         id: collect
         run: |
