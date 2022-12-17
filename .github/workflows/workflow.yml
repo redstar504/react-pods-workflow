@@ -58,7 +58,9 @@ jobs:
           echo 'PODSPEC_FILES<<EOF' >> $GITHUB_ENV
           npx react-native config | jq '[.dependencies[].platforms.ios.podspecPath | select( . != null )]' >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-          echo "$PODSPEC_FILES"
+
+      - run: |
+          echo "$GITHUB_ENV"
 
 #      - name: Challenge podspecs against Podfile.lock
 #        id: bonjour
